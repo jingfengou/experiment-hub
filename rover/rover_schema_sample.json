@@ -1,0 +1,218 @@
+{
+  "dataset": "cheryyunl/ROVER",
+  "subset": "ROVER-IG",
+  "split": "train[:5]",
+  "num_samples": 5,
+  "features": {
+    "id": "Value(dtype='string', id=None)",
+    "image": "Image(decode=True, id=None)",
+    "image2": "Image(decode=True, id=None)",
+    "target_image": "Image(decode=True, id=None)",
+    "prompt": "Value(dtype='string', id=None)",
+    "dimension": "ClassLabel(names=['logic', 'science', 'culture', 'common_sense'], id=None)",
+    "reasoning_type": "Value(dtype='string', id=None)",
+    "keywords": "Value(dtype='string', id=None)",
+    "target_description": "Value(dtype='string', id=None)"
+  },
+  "samples": [
+    {
+      "id": {
+        "type": "str",
+        "value": "logic_abstract_1"
+      },
+      "image": {
+        "type": "PngImageFile",
+        "size": [
+          1290,
+          1284
+        ]
+      },
+      "image2": {
+        "type": "NoneType"
+      },
+      "target_image": {
+        "type": "PngImageFile",
+        "size": [
+          1276,
+          1256
+        ]
+      },
+      "prompt": {
+        "type": "str",
+        "value": "Generate the next logical move in this tic-tac-toe game for player O"
+      },
+      "dimension": {
+        "type": "int",
+        "value": 0
+      },
+      "reasoning_type": {
+        "type": "str",
+        "value": "abstract"
+      },
+      "keywords": {
+        "type": "str",
+        "value": "game logic, strategic thinking, tic-tac-toe, next move"
+      },
+      "target_description": {
+        "type": "str",
+        "value": "Same tic-tac-toe grid with O placed in the bottom-right corner square, maintaining the existing X and O positions and black and white grid design"
+      }
+    },
+    {
+      "id": {
+        "type": "str",
+        "value": "logic_abstract_2"
+      },
+      "image": {
+        "type": "PngImageFile",
+        "size": [
+          450,
+          450
+        ]
+      },
+      "image2": {
+        "type": "NoneType"
+      },
+      "target_image": {
+        "type": "NoneType"
+      },
+      "prompt": {
+        "type": "str",
+        "value": "Generate the next logical move in this tic-tac-toe game for player O"
+      },
+      "dimension": {
+        "type": "int",
+        "value": 0
+      },
+      "reasoning_type": {
+        "type": "str",
+        "value": "abstract"
+      },
+      "keywords": {
+        "type": "str",
+        "value": "game strategy, winning move, tic-tac-toe, blocking move"
+      },
+      "target_description": {
+        "type": "str",
+        "value": "Same tic-tac-toe grid with O placed in the center square (middle row, middle column), maintaining the existing X and O positions and grid design"
+      }
+    },
+    {
+      "id": {
+        "type": "str",
+        "value": "logic_abstract_3"
+      },
+      "image": {
+        "type": "PngImageFile",
+        "size": [
+          450,
+          450
+        ]
+      },
+      "image2": {
+        "type": "NoneType"
+      },
+      "target_image": {
+        "type": "NoneType"
+      },
+      "prompt": {
+        "type": "str",
+        "value": "Generate the next logical move in this tic-tac-toe game for player O."
+      },
+      "dimension": {
+        "type": "int",
+        "value": 0
+      },
+      "reasoning_type": {
+        "type": "str",
+        "value": "abstract"
+      },
+      "keywords": {
+        "type": "str",
+        "value": "game strategy, winning move, tic-tac-toe, blocking move"
+      },
+      "target_description": {
+        "type": "str",
+        "value": "Same tic-tac-toe grid with O placed in the middle-left position (middle row, left column) to block X from winning, maintaining existing symbols and grid layout"
+      }
+    },
+    {
+      "id": {
+        "type": "str",
+        "value": "logic_abstract_4"
+      },
+      "image": {
+        "type": "PngImageFile",
+        "size": [
+          450,
+          450
+        ]
+      },
+      "image2": {
+        "type": "NoneType"
+      },
+      "target_image": {
+        "type": "NoneType"
+      },
+      "prompt": {
+        "type": "str",
+        "value": "Generate the next logical move in this tic-tac-toe game for player X."
+      },
+      "dimension": {
+        "type": "int",
+        "value": 0
+      },
+      "reasoning_type": {
+        "type": "str",
+        "value": "abstract"
+      },
+      "keywords": {
+        "type": "str",
+        "value": "game strategy, winning move, tic-tac-toe, blocking move"
+      },
+      "target_description": {
+        "type": "str",
+        "value": "Same tic-tac-toe grid with X placed in the top-right corner (top row, right column)"
+      }
+    },
+    {
+      "id": {
+        "type": "str",
+        "value": "logic_abstract_5"
+      },
+      "image": {
+        "type": "PngImageFile",
+        "size": [
+          450,
+          450
+        ]
+      },
+      "image2": {
+        "type": "NoneType"
+      },
+      "target_image": {
+        "type": "NoneType"
+      },
+      "prompt": {
+        "type": "str",
+        "value": "Generate the next logical move in this tic-tac-toe game for player O."
+      },
+      "dimension": {
+        "type": "int",
+        "value": 0
+      },
+      "reasoning_type": {
+        "type": "str",
+        "value": "abstract"
+      },
+      "keywords": {
+        "type": "str",
+        "value": "game strategy, winning move, tic-tac-toe, blocking move"
+      },
+      "target_description": {
+        "type": "str",
+        "value": "Same tic-tac-toe grid with O placed in the center position (middle row, middle column), completing a vertical line of three O's in the middle column for a winning game state"
+      }
+    }
+  ]
+}

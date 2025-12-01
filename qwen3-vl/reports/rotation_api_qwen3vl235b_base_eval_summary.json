@@ -1,0 +1,9 @@
+{
+  "outputs_dir": "/workspace/oujingfeng/project/think_with_generated_images/Qwen3-VL/outputs/rotation_api_qwen3vl235b_base",
+  "data_json": "/workspace/oujingfeng/project/think_with_generated_images/datasets/mydatasets/dataset/data_modified_with_subject.json",
+  "evaluated": 999,
+  "correct": 330,
+  "accuracy": 0.3303303303303303,
+  "missing_prediction": 0,
+  "total_files": 999
+}

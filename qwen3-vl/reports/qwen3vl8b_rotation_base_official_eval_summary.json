@@ -1,0 +1,9 @@
+{
+  "outputs_dir": "outputs/qwen3vl8b_rotation_base_official",
+  "data_json": "/workspace/oujingfeng/project/think_with_generated_images/datasets/mydatasets/dataset/data_modified_with_subject.json",
+  "evaluated": 1000,
+  "correct": 29,
+  "accuracy": 0.029,
+  "missing_prediction": 890,
+  "total_files": 1000
+}
