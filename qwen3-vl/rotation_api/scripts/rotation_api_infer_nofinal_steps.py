@@ -37,15 +37,17 @@ def encode_image_b64(image_path: Path) -> str:
 
 
 def build_prompt(item: dict) -> str:
+    instruction = (
+        "You should first provide a reasoning process, then provide a single option(A, B, C or D) as the final answer. "
+        "The reasoning process and the answer are enclosed within <think></think> and <answer></answer> tags, "
+        "respectively, i.e., <think>reasoning process</think>, <answer>answer</answer>.\n"
+    )
     question = item.get("Question", "").strip()
     choices = item.get("Choices", []) or []
-    choices_text = "\n".join([f"{chr(ord('A') + i)}. {c}" for i, c in enumerate(choices)])
-    return (
-        f"{question}\n"
-        f"Choices:\n{choices_text}\n"
-        "你将看到题干图以及若干中间步骤图像（不含最终状态），请依据这些信息推理出正确选项字母。"
-        "最后只输出一个大写选项字母，并简要给出理由。"
-    )
+    choices_text = "\n".join([f"{chr(ord('A') + i)}) {c}" for i, c in enumerate(choices)])
+    if choices_text and not choices_text.startswith("\n"):
+        choices_text = "\n" + choices_text
+    return instruction + "<image>\n\n" + f"Question: {question}{choices_text}\n\nAnswer: "
 
 
 def build_messages(item: dict, data_root: Path):

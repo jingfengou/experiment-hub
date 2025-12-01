@@ -81,3 +81,50 @@
 - 图文交替数据与运行：`prepare_3dviews_interleave_jsonl.py` 生成 base/steps JSONL+拷贝图，`run_3dviews_mathcanvas_interleave_base.sh` / `run_3dviews_mathcanvas_interleave_steps.sh` 调用 `mathcanvas_interleave_reasoner.py`。
 - Prompt 细节：统一 rotation 模板，带 `<think>/<answer>` 标签；steps 模式在 prompt 中追加“Step hints (sanitized, options hidden)”并按步骤依次喂入图/文；过滤规则用正则 `(option|选项|answer|正确|正确选项|final answer)` 按句拆分后删除含关键字句子。
 - 路径修正：上述脚本与预处理文件已放回 `MathCanvas/BAGEL-Canvas/scripts/inference/`，清理了误放的 `/workspace/scripts/` 目录。
+
+## 2025-12-XX
+- Rotation Hunyuan3D 中间步骤替换与运行指令（集中在 experiment-hub）：
+  - 新脚本：`experiment-hub/mathcanvas/hunyuan3d/scripts/prepare_rotation_hunyuan3d_override.py`，将 Hunyuan3D 投影替换原数据集的步骤图，生成新数据根和 JSON。
+  - 生成命令：
+    ```bash
+    cd /workspace/oujingfeng/experiment-hub
+    python mathcanvas/hunyuan3d/scripts/prepare_rotation_hunyuan3d_override.py \
+      --dataset-json /workspace/oujingfeng/project/think_with_generated_images/datasets/mydatasets/dataset/data_modified_with_subject.json \
+      --dataset-root /workspace/oujingfeng/project/think_with_generated_images/datasets/mydatasets/dataset \
+      --hunyuan-root /workspace/oujingfeng/project/think_with_generated_images/MathCanvas/BAGEL-Canvas/outputs/hunyuan3d_rotation_proj \
+      --output-root /workspace/oujingfeng/project/think_with_generated_images/MathCanvas/BAGEL-Canvas/data_handlers/rotation_hunyuan3d \
+      --max-samples 1000
+    ```
+  - 非交替推理：
+    ```bash
+    cd /workspace/oujingfeng/project/think_with_generated_images/MathCanvas/BAGEL-Canvas
+    CUDA_VISIBLE_DEVICES=0,1 bash scripts/inference/run_rotation_mathcanvas_steps_ddp.sh \
+      DATA_JSON=/workspace/oujingfeng/project/think_with_generated_images/MathCanvas/BAGEL-Canvas/data_handlers/rotation_hunyuan3d/data_modified_with_subject.json \
+      DATA_ROOT=/workspace/oujingfeng/project/think_with_generated_images/MathCanvas/BAGEL-Canvas/data_handlers/rotation_hunyuan3d
+    CUDA_VISIBLE_DEVICES=0,1 bash scripts/inference/run_rotation_mathcanvas_steps_nofinal_ddp.sh \
+      DATA_JSON=/workspace/oujingfeng/project/think_with_generated_images/MathCanvas/BAGEL-Canvas/data_handlers/rotation_hunyuan3d/data_modified_with_subject.json \
+      DATA_ROOT=/workspace/oujingfeng/project/think_with_generated_images/MathCanvas/BAGEL-Canvas/data_handlers/rotation_hunyuan3d
+    ```
+  - 交替数据准备：
+    ```bash
+    python scripts/inference/prepare_rotation_interleave_jsonl.py \
+      --dataset-json data_handlers/rotation_hunyuan3d/data_modified_with_subject.json \
+      --dataset-root data_handlers/rotation_hunyuan3d \
+      --output-root data_handlers/rotation_interleave_hunyuan3d \
+      --mode steps --max-samples 1000
+    python scripts/inference/prepare_rotation_interleave_jsonl.py \
+      --dataset-json data_handlers/rotation_hunyuan3d/data_modified_with_subject.json \
+      --dataset-root data_handlers/rotation_hunyuan3d \
+      --output-root data_handlers/rotation_interleave_hunyuan3d \
+      --mode nofinal --max-samples 1000
+    ```
+  - 交替推理：
+    ```bash
+    CUDA_VISIBLE_DEVICES=0,1 bash scripts/inference/run_rotation_mathcanvas_steps_ddp.sh \
+      DATA_JSON=data_handlers/rotation_interleave_hunyuan3d/steps/rotation_steps.jsonl \
+      DATA_ROOT=data_handlers/rotation_interleave_hunyuan3d/steps
+    CUDA_VISIBLE_DEVICES=0,1 bash scripts/inference/run_rotation_mathcanvas_steps_nofinal_ddp.sh \
+      DATA_JSON=data_handlers/rotation_interleave_hunyuan3d/nofinal/rotation_nofinal.jsonl \
+      DATA_ROOT=data_handlers/rotation_interleave_hunyuan3d/nofinal
+    ```
+  - 评估可沿用 `scripts/evaluation/eval_rotation_outputs.py`，指定对应输出目录和新 JSON。

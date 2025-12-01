@@ -42,14 +42,18 @@ def encode_image_b64(image_path: Path) -> str:
 
 
 def build_prompt(item: dict) -> str:
-    choices = item.get("Choices", [])
-    choices_text = "\n".join([f"{chr(ord('A') + idx)}. {opt}" for idx, opt in enumerate(choices)])
-    question = item.get("Question", "").strip()
-    return (
-        f"{question}\n"
-        f"Choices:\n{choices_text}\n"
-        "请根据图像与选项，直接给出正确选项字母，并用一两句话说明理由。"
+    instruction = (
+        "You should first provide a reasoning process, then provide a single option(A, B, C or D) as the final answer. "
+        "The reasoning process and the answer are enclosed within <think></think> and <answer></answer> tags, "
+        "respectively, i.e., <think>reasoning process</think>, <answer>answer</answer>.\n"
     )
+    question = item.get("Question", "").strip()
+    choices = item.get("Choices", [])
+    choices_text = "\n".join([f"{chr(ord('A') + idx)}) {opt}" for idx, opt in enumerate(choices)])
+    if choices_text and not choices_text.startswith("\n"):
+        choices_text = "\n" + choices_text
+    prompt = instruction + "<image>\n\n" + f"Question: {question}{choices_text}\n\nAnswer: "
+    return prompt
 
 
 def build_message(item: dict, image_path: Path):

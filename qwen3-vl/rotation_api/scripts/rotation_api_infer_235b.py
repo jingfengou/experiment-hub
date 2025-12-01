@@ -55,9 +55,9 @@ def encode_image_b64(image_path: Path) -> str:
 
 def build_prompt(item: dict, mode: str, step_desc: List[str]) -> str:
     instruction = (
-        "You should first provide a concise reasoning (<=3 sentences) inside <think></think>, "
-        "then provide a single option (A, B, C or D) inside <answer></answer>. "
-        "Always output both tags even if unsure; pick the most likely option.\n"
+        "You should first provide a reasoning process, then provide a single option(A, B, C or D) as the final answer. "
+        "The reasoning process and the answer are enclosed within <think></think> and <answer></answer> tags, "
+        "respectively, i.e., <think>reasoning process</think>, <answer>answer</answer>.\n"
     )
     q = item.get("Question", "").strip()
     choices = item.get("Choices", [])

@@ -33,6 +33,8 @@ sync_file "${MC}/scripts/inference/run_rotation_mathcanvas_steps_ddp.sh" "${ROOT
 sync_file "${MC}/scripts/inference/run_rotation_mathcanvas_steps_nofinal_ddp.sh" "${ROOT}/mathcanvas/rotation/scripts"
 sync_file "${MC}/scripts/inference/run_rotation_mathcanvas_interleave_nofinal.sh" "${ROOT}/mathcanvas/rotation/scripts"
 sync_file "${MC}/outputs/rotation_eval_summary.md" "${ROOT}/mathcanvas/rotation/reports"
+sync_file "${MC}/outputs/3dviews_eval_summary.md" "${ROOT}/mathcanvas/3dviews/reports"
+sync_file "${MC}/scripts/evaluation/eval_3dviews_outputs.py" "${ROOT}/mathcanvas/3dviews/scripts"
 
 # MathCanvas - 3Dviews
 sync_file "${MC}/scripts/inference/prepare_3dviews_interleave_jsonl.py" "${ROOT}/mathcanvas/3dviews/scripts"
@@ -53,6 +55,7 @@ sync_file "${QV}/evaluation/rotation_api_infer_235b.py" "${ROOT}/qwen3-vl/rotati
 sync_file "${QV}/evaluation/run_rotation_api.sh" "${ROOT}/qwen3-vl/rotation_api/scripts"
 sync_file "${QV}/evaluation/run_rotation_api_235b.sh" "${ROOT}/qwen3-vl/rotation_api/scripts"
 sync_file "${QV}/evaluation/run_rotation_api_qwen3vl_plus_nofinal_steps.sh" "${ROOT}/qwen3-vl/rotation_api/scripts"
+sync_file "${QV}/evaluation/eval_rotation_api_outputs.py" "${ROOT}/qwen3-vl/rotation_api/scripts"
 sync_file "${QV}/evaluation/run_qwen3vl_rotation_official.py" "${ROOT}/qwen3-vl/rotation_official/scripts"
 sync_file "${QV}/evaluation/run_qwen3vl_rotation_official.sh" "${ROOT}/qwen3-vl/rotation_official/scripts"
 sync_file "${QV}/evaluation/eval_qwen3vl_rotation_outputs.py" "${ROOT}/qwen3-vl/rotation_official/scripts"
@@ -60,6 +63,7 @@ sync_file "${QV}/outputs/qwen3vl8b_rotation_eval_summary.md" "${ROOT}/qwen3-vl/r
 sync_file "${QV}/outputs/qwen3vl8b_rotation_base_official_eval_summary.json" "${ROOT}/qwen3-vl/reports"
 sync_file "${QV}/outputs/qwen3vl8b_rotation_nofinal_official_eval_summary.json" "${ROOT}/qwen3-vl/reports"
 sync_file "${QV}/outputs/rotation_api_qwen3vl235b_base_eval_summary.json" "${ROOT}/qwen3-vl/reports"
+sync_file "${QV}/outputs/rotation_api_eval_summary.md" "${ROOT}/qwen3-vl/reports"
 
 # ROVER scripts/results
 sync_file "${RV}/prepare_rover_for_mathcanvas.py" "${ROOT}/rover/scripts"
