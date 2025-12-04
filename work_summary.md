@@ -82,6 +82,12 @@
 - Prompt 细节：统一 rotation 模板，带 `<think>/<answer>` 标签；steps 模式在 prompt 中追加“Step hints (sanitized, options hidden)”并按步骤依次喂入图/文；过滤规则用正则 `(option|选项|answer|正确|正确选项|final answer)` 按句拆分后删除含关键字句子。
 - 路径修正：上述脚本与预处理文件已放回 `MathCanvas/BAGEL-Canvas/scripts/inference/`，清理了误放的 `/workspace/scripts/` 目录。
 
+## 2025-12-03
+- 新增 MoT 权重跑 rotation base 交替推理脚本 `scripts/inference/run_rotation_mathcanvas_mot_ddp.sh`，默认指向 `/workspace/oujingfeng/modelckpt/BAGEL-7B-MoT`，输出 `outputs/rotation_mathcanvas_interleave_base_mot`，日志 `logs/rotation_mathcanvas_mot_ddp.log`。
+- 修正 rotation 交替数据准备的 prompt 生成模板（`prepare_rotation_interleave_jsonl.py`）：题干 `<image>` + `Question:` + 选项 + `Answer:`，与 infer 脚本一致。
+- 处理 `ae.safetensors` 缺少 metadata 导致 Accelerate 报错的问题：用 safetensors 重写 metadata `format=pt`，路径不变。
+- MoT 推理已启动（2 卡 H100），可能有 NCCL 设备映射警告和未使用权重提示，均可忽略；实时日志 `tail -f logs/rotation_mathcanvas_mot_ddp.log`，结果目录 `outputs/rotation_mathcanvas_interleave_base_mot/rotation_base_mot_default`。
+
 ## 2025-12-XX
 - Rotation Hunyuan3D 中间步骤替换与运行指令（集中在 experiment-hub）：
   - 新脚本：`experiment-hub/mathcanvas/hunyuan3d/scripts/prepare_rotation_hunyuan3d_override.py`，将 Hunyuan3D 投影替换原数据集的步骤图，生成新数据根和 JSON。

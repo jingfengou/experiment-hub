@@ -52,6 +52,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-think-tokens", type=int, default=1024, help="Max tokens for text generation.")
     parser.add_argument("--text-temperature", type=float, default=0.3, help="Sampling temperature.")
     parser.add_argument("--seed", type=int, default=42, help="Base random seed.")
+    parser.add_argument(
+        "--skip-final-image",
+        action="store_true",
+        help="Do not generate the final image; answer directly after reasoning context.",
+    )
     return parser.parse_args()
 
 
@@ -233,7 +238,10 @@ def main():
     args = parse_args()
     rank = init_distributed()
     world_size = dist.get_world_size() if dist.is_available() and dist.is_initialized() else 1
-    if rank in [0, -1]:
+    if rank < 0:
+        # Non-DDP fallback: treat as single process
+        rank, world_size = 0, 1
+    if rank == 0:
         print(f"World size: {world_size}, rank: {rank}")
     device_index = rank if rank >= 0 else 0
     set_seed(args.seed + max(rank, 0))
@@ -245,10 +253,10 @@ def main():
     indices = select_indices(total, args.sample_fraction, args.sample_region, args.max_samples)
     assigned = chunk_indices(indices, world_size, rank)
 
-    if rank in [0, -1]:
+    if rank == 0:
         print(f"Total samples: {total}, selected: {len(indices)}; rank {rank} processing {len(assigned)}")
     if not assigned:
-        if rank in [0, -1]:
+        if rank == 0:
             print("No samples assigned, exiting.")
         return
 
@@ -298,25 +306,27 @@ def main():
         gen_context = inferencer.update_context_text(reasoning_text, gen_context)
         cfg_img_context = inferencer.update_context_text(reasoning_text, cfg_img_context)
 
-        # (2) generate final image
-        gen_image = inferencer.gen_image(
-            image_shapes,
-            gen_context,
-            cfg_text_precontext=cfg_text_context,
-            cfg_img_precontext=cfg_img_context,
-            cfg_text_scale=4.0,
-            cfg_img_scale=2.0,
-            cfg_interval=[0.0, 1.0],
-            timestep_shift=3.0,
-            num_timesteps=50,
-            cfg_renorm_min=0.0,
-            cfg_renorm_type="text_channel",
-            enable_taylorseer=False,
-        )
+        gen_image = None
+        if not args.skip_final_image:
+            # (2) generate final image
+            gen_image = inferencer.gen_image(
+                image_shapes,
+                gen_context,
+                cfg_text_precontext=cfg_text_context,
+                cfg_img_precontext=cfg_img_context,
+                cfg_text_scale=4.0,
+                cfg_img_scale=2.0,
+                cfg_interval=[0.0, 1.0],
+                timestep_shift=3.0,
+                num_timesteps=50,
+                cfg_renorm_min=0.0,
+                cfg_renorm_type="text_channel",
+                enable_taylorseer=False,
+            )
 
-        # Feed generated image back for answering
-        gen_context = inferencer.update_context_image(gen_image, gen_context, vae=True, vit=True)
-        cfg_text_context = inferencer.update_context_image(gen_image, cfg_text_context, vae=True, vit=True)
+            # Feed generated image back for answering
+            gen_context = inferencer.update_context_image(gen_image, gen_context, vae=True, vit=True)
+            cfg_text_context = inferencer.update_context_image(gen_image, cfg_text_context, vae=True, vit=True)
 
         # (3) generate final answer
         final_answer = inferencer.gen_text(
@@ -344,12 +354,16 @@ def main():
             f.write("\nFinal Answer:\n")
             f.write(final_answer)
 
-        try:
-            gen_image.save(gen_img_path)
-        except Exception as e:
-            print(f"[Rank {rank}] Failed to save image for sample {idx}: {e}")
+        if gen_image is not None:
+            try:
+                gen_image.save(gen_img_path)
+            except Exception as e:
+                print(f"[Rank {rank}] Failed to save image for sample {idx}: {e}")
+            suffix = " (+gen_final.png)"
+        else:
+            suffix = " (no final image)"
 
-        print(f"[Rank {rank}] Processed sample {idx} -> {txt_path} (+gen_final.png)")
+        print(f"[Rank {rank}] Processed sample {idx} -> {txt_path}{suffix}")
 
     if dist.is_available() and dist.is_initialized():
         dist.barrier()

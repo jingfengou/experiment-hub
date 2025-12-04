@@ -128,3 +128,76 @@
       DATA_ROOT=data_handlers/rotation_interleave_hunyuan3d/nofinal
     ```
   - 评估可沿用 `scripts/evaluation/eval_rotation_outputs.py`，指定对应输出目录和新 JSON。
+
+- Rotation Hunyuan3D 替换后实验（保留/去掉最后一步，生成/不生成最终图）
+  - 数据准备：同上 `prepare_rotation_hunyuan3d_override.py`，生成 `data_handlers/rotation_hunyuan3d`。
+  - **不含最终步 + 交替生成图**（step 图为 Hunyuan3D，去掉最后一步）：
+    ```bash
+    # 交替 nofinal JSONL（使用 Hunyuan3D 图）
+    python scripts/inference/prepare_rotation_interleave_jsonl.py \
+      --dataset-json data_handlers/rotation_hunyuan3d/data_modified_with_subject.json \
+      --dataset-root data_handlers/rotation_hunyuan3d \
+      --output-root data_handlers/rotation_interleave_hunyuan3d \
+      --mode nofinal --max-samples 1000
+    # 交替推理（生成最终图）
+    CUDA_VISIBLE_DEVICES=0,1 OUTPUT_DIR=outputs/rotation_mathcanvas_interleave_nofinal_hy \
+      DATA_JSON=data_handlers/rotation_interleave_hunyuan3d/nofinal/rotation_nofinal.jsonl \
+      DATA_ROOT=data_handlers/rotation_interleave_hunyuan3d/nofinal \
+      bash scripts/inference/run_rotation_mathcanvas_steps_nofinal_ddp.sh
+    ```
+  - **不含最终步 + 理解（不生成最终图）**：
+    ```bash
+    PYTHONPATH=$(pwd) CUDA_VISIBLE_DEVICES=0 \
+    /workspace/oujingfeng/anaconda/anaconda3/envs/bagel-canvas/bin/python \
+      scripts/inference/infer_rotation_mathcanvas_steps_nofinal_ddp.py \
+      --model-dir /workspace/oujingfeng/modelckpt/BAGEL-Canvas \
+      --ckpt-dir /workspace/oujingfeng/modelckpt/BAGEL-Canvas \
+      --ckpt-file model.safetensors \
+      --dataset-file data_handlers/rotation_hunyuan3d/data_modified_with_subject.json \
+      --dataset-root data_handlers/rotation_hunyuan3d \
+      --output-dir outputs/rotation_mathcanvas_steps_nofinal_ddp_hy_nogen \
+      --max-samples 1000 --sample-fraction 1.0 --sample-region head \
+      --text-temperature 0.3 --skip-final-image
+    ```
+  - **含最终步 + 理解（不生成最终图）**：
+    ```bash
+    PYTHONPATH=$(pwd) CUDA_VISIBLE_DEVICES=0 \
+    /workspace/oujingfeng/anaconda/anaconda3/envs/bagel-canvas/bin/python \
+      scripts/inference/infer_rotation_mathcanvas_steps_ddp.py \
+      --model-dir /workspace/oujingfeng/modelckpt/BAGEL-Canvas \
+      --ckpt-dir /workspace/oujingfeng/modelckpt/BAGEL-Canvas \
+      --ckpt-file model.safetensors \
+      --dataset-file data_handlers/rotation_hunyuan3d/data_modified_with_subject.json \
+      --dataset-root data_handlers/rotation_hunyuan3d \
+      --output-dir outputs/rotation_mathcanvas_steps_ddp_hy_nogen \
+      --max-samples 1000 --sample-fraction 1.0 --sample-region head \
+      --text-temperature 0.3 --skip-final-image
+    ```
+  - Prompt 样例（steps 模式；nofinal 则去掉最后一步描述/图）：
+    ```
+    You should first provide a reasoning process, then provide a single option(A, B, C or D) as the final answer.
+    The reasoning process and the answer are enclosed within <think></think> and <answer></answer> tags,
+    respectively, i.e., <think>reasoning process</think>, <answer>answer</answer>.
+    <image>
+
+    Question: {Question}
+    A) {choice1}
+    B) {choice2}
+    C) {choice3}
+    D) {choice4}
+    Step 1: {description_1}
+    Step 2: {description_2}
+    ...
+    Answer:
+    ```
+
+## 2025-12-02
+- Rotation Hunyuan3D 替换数据评估与报告
+  - 新评测脚本 `scripts/evaluation/eval_rotation_dir_outputs.py`，支持 sampleXXXXX/answer.txt 结构（解析 \boxed{X} 等）。
+  - 结果：steps (Hunyuan, final off) Acc=0.3900，输出 `outputs/rotation_mathcanvas_steps_ddp_hy_nogen`；steps_nofinal (Hunyuan, final on) Acc≈0.2910，输出 `outputs/rotation_mathcanvas_steps_nofinal_ddp_hy`。
+  - 报告更新 `experiment-hub/docs/rotation_report.md`：增补上述结果，5 条 case study 并内嵌生成图链接。
+- Qwen3-VL 3Dviews 适配与跑全模式
+  - `evaluation/run_qwen3vl_3dviews_official.py` 修复处理器加载：固定使用远端 `processor-id`，避免本地 config 缺失 model_type；仍可用本地权重路径。
+  - 一键脚本 `run_qwen3vl3dviews_all.sh` 默认 `MAX_NEW_TOKENS=512`，下载/复用本地模型后依次跑 base_non/steps_non/interleave_base/interleave_steps。
+- 模型下载
+  - `experiment-hub/scripts/download_bagel_canvas.sh` 默认下载 `ByteDance-Seed/BAGEL-7B-MoT` 至 `/workspace/oujingfeng/modelckpt/BAGEL-7B-MoT`（可通过环境变量覆盖）。***

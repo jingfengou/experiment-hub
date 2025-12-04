@@ -10,6 +10,8 @@ Dataset: `/workspace/oujingfeng/project/think_with_generated_images/datasets/myd
 | steps_nofinal / non-int  | 1000  | 271     | 0            | 0.2710   | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_nofinal_ddp |
 | base / interleave        | 1000  | 242     | 2            | 0.2420   | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_interleave_base/rotation_base_default |
 | nofinal / interleave     | 1000  | 258     | 2            | 0.2580   | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_interleave_nofinal/rotation_nofinal_default |
+| steps (Hunyuan, final off) | 1000 | 390   | 0 | 0.3900 | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_ddp_hy_nogen |
+| steps_nofinal (Hunyuan, final on) | 1000 | 291 | 0 | 0.2910 | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_nofinal_ddp_hy |
 
 Prompt (all modes share文本；nofinal 移除最后一步图像):
 ```
@@ -26,6 +28,18 @@ D) {choice4}
 
 Answer:
 ```
+
+Case study (rotation, Hunyuan steps_nofinal, final on)：
+- sample00000: GT=D, Pred=C，尾句 `The final answer is \boxed{C}.`
+  ![sample00000](MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_nofinal_ddp_hy/sample00000/images/gen_final.png)
+- sample00001: GT=D, Pred=A，尾句 `Final answer: \boxed{A}`
+  ![sample00001](MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_nofinal_ddp_hy/sample00001/images/gen_final.png)
+- sample00002: GT=B, Pred=D，尾句 `...answer is \boxed{D}.`
+  ![sample00002](MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_nofinal_ddp_hy/sample00002/images/gen_final.png)
+- sample00003: GT=C, Pred=C，尾句 `...correct choice is \boxed{C}.`
+  ![sample00003](MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_nofinal_ddp_hy/sample00003/images/gen_final.png)
+- sample00004: GT=D, Pred=D，尾句 `...answer is \boxed{D}.`
+  ![sample00004](MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_nofinal_ddp_hy/sample00004/images/gen_final.png)
 
 ## Qwen3-VL (Official Offline, 8B)
 | Mode     | Total | Correct | Missing_pred | Accuracy | Output Path |

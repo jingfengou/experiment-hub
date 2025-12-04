@@ -45,6 +45,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-think-tokens", type=int, default=1024, help="Max tokens for text generation.")
     parser.add_argument("--text-temperature", type=float, default=0.3, help="Sampling temperature.")
     parser.add_argument("--seed", type=int, default=42, help="Base random seed.")
+    parser.add_argument(
+        "--skip-final-image",
+        action="store_true",
+        help="Do not generate the final image; answer directly after reasoning context.",
+    )
     return parser.parse_args()
 
 
@@ -281,6 +286,7 @@ def main() -> None:
             cfg_renorm_min=0.0,
             cfg_renorm_type="text_channel",
             enable_taylorseer=False,
+            skip_final_image=args.skip_final_image,
         )
 
         gen_texts = [o for o in outputs if isinstance(o, str)]

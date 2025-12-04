@@ -59,6 +59,7 @@ sync_file "${QV}/evaluation/eval_rotation_api_outputs.py" "${ROOT}/qwen3-vl/rota
 sync_file "${QV}/evaluation/run_qwen3vl_rotation_official.py" "${ROOT}/qwen3-vl/rotation_official/scripts"
 sync_file "${QV}/evaluation/run_qwen3vl_rotation_official.sh" "${ROOT}/qwen3-vl/rotation_official/scripts"
 sync_file "${QV}/evaluation/eval_qwen3vl_rotation_outputs.py" "${ROOT}/qwen3-vl/rotation_official/scripts"
+sync_file "${QV}/evaluation/run_qwen3vl_3dviews_official.py" "${ROOT}/qwen3-vl/rotation_official/scripts"
 sync_file "${QV}/outputs/qwen3vl8b_rotation_eval_summary.md" "${ROOT}/qwen3-vl/reports"
 sync_file "${QV}/outputs/qwen3vl8b_rotation_base_official_eval_summary.json" "${ROOT}/qwen3-vl/reports"
 sync_file "${QV}/outputs/qwen3vl8b_rotation_nofinal_official_eval_summary.json" "${ROOT}/qwen3-vl/reports"
