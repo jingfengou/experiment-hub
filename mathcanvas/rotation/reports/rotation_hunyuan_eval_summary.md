@@ -7,6 +7,8 @@ Dataset: `MathCanvas/BAGEL-Canvas/data_handlers/rotation_hunyuan3d/data_modified
 | steps (all steps, final gen **off**) | off             | 1000  | 390     | 0.3900   | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_ddp_hy_nogen |
 | steps_nofinal (remove last step img) | on              | 1000  | 291     | 0.2910   | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_nofinal_ddp_hy |
 
+模式含义：steps=题干+Hunyuan3D 生成的全部步骤图+步骤文本；steps_nofinal=题干+步骤图+步骤文本但移除最后一步图文，由模型生成最终结果。
+
 Prompt（steps 模式，含全部步骤；nofinal 则去掉最后一步描述/图）：
 ```
 You should first provide a reasoning process, then provide a single option(A, B, C or D) as the final answer.

@@ -158,6 +158,10 @@ class InterleaveReasoner:
             self.new_token_ids['bos_token_id']: 'text',
             self.new_token_ids['end_of_text']: 'end',
         }
+        # 兼容 BAGEL-MoT：其文本生成默认以 <|im_end|> (eos_token_id) 结束，原逻辑只监听 end_of_text。
+        eos_token_id = self.new_token_ids.get('eos_token_id')
+        if eos_token_id is not None and eos_token_id not in self.action_token_map:
+            self.action_token_map[eos_token_id] = 'end'
         if dist.get_rank() == 0:
             print("InterleaveReasoner initialized on each process.")
 

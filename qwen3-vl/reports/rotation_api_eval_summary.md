@@ -9,6 +9,7 @@ Dataset: `/workspace/oujingfeng/project/think_with_generated_images/datasets/myd
 
 Notes:
 - qwen3-vl-plus run缺少 907 个 response.json，导致大量 missing_pred。
+- 模式含义：base=只有题干图；nofinal steps=题干+步骤图+步骤文本但移除最后一步图文，让模型补完。
 
 Prompt (base, `rotation_api_infer.py`):
 ```

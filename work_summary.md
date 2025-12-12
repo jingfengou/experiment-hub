@@ -134,3 +134,29 @@
       DATA_ROOT=data_handlers/rotation_interleave_hunyuan3d/nofinal
     ```
   - 评估可沿用 `scripts/evaluation/eval_rotation_outputs.py`，指定对应输出目录和新 JSON。
+
+## 2025-12-05
+- 评估 MoT 权重交错推理 `outputs/rotation_mathcanvas_interleave_base_mot/rotation_base_mot_default`：total=1000、correct=261、acc=0.2610，未生成中间图（action 未触发 image 分支，`max_iterations=10` 全部为文本）。
+- 更新 rotation 报告：`mathcanvas/rotation/reports/rotation_eval_summary.md` 与 `docs/rotation_report.md` 记录 MoT 交错无中间图、默认迭代说明，并补充 base/steps/steps_nofinal 含步骤文本+图的定义。
+- 统一旋转模式释义至 Qwen 报告：`qwen3-vl/reports/qwen3vl8b_rotation_eval_summary.md`、`rotation_api_eval_summary.md` 明确 base=题干图；nofinal=题干+步骤图+步骤文本但去掉最后一步由模型补全。
+
+## 2025-12-08
+- 修复 MoT 交替推理的终止判定：在 `mathcanvas/rotation/scripts/mathcanvas_interleave_reasoner.py` 与 `MathCanvas/BAGEL-Canvas/mathcanvas_interleave_reasoner.py` 将 `<|im_end|>` (`eos_token_id`) 也映射为 end，避免 MoT 输出被截断却不早停/不画图。
+- SpatialViz + MoT 支持：新增 `scripts/inference/prepare_spatialviz_from_parquet.py`（从 `datasets/SpatialViz/test-00000-of-00001.parquet` 生成带系统 prompt 的 JSONL），更新 `scripts/inference/run_spatialviz_mathcanvas_mot_ddp.sh`（默认系统 prompt、自动生成 JSONL、指向 MoT 权重）。
+- 运行指令示例：
+  - Rotation MoT 重跑（自定义输出防覆盖）：
+    ```bash
+    cd /workspace/oujingfeng/project/think_with_generated_images/MathCanvas/BAGEL-Canvas
+    export OUTPUT_DIR=outputs/rotation_mathcanvas_interleave_base_mot/rotation_base_mot_rerun_$(date +%m%d_%H%M)
+    CUDA_VISIBLE_DEVICES=0,1 bash scripts/inference/run_rotation_mathcanvas_mot_ddp.sh
+    ```
+  - SpatialViz + MoT（需 pyarrow/pandas 读取 parquet，自定义输出防覆盖）：
+    ```bash
+    cd /workspace/oujingfeng/project/think_with_generated_images/MathCanvas/BAGEL-Canvas
+    export OUTPUT_DIR=outputs/spatialviz_mathcanvas_interleave_mot/run_$(date +%m%d_%H%M)
+    CUDA_VISIBLE_DEVICES=0,1 bash scripts/inference/run_spatialviz_mathcanvas_mot_ddp.sh
+    ```
+
+## 2025-12-09
+- MoT 交错 rotation 评估：`outputs/rotation_mathcanvas_interleave_base_mot/rotation_base_mot_default` 重新评测，total=1000、correct=258、acc=0.2580，仍无中间图；`mathcanvas/rotation/reports/rotation_eval_summary.md` 与 `docs/rotation_report.md` 已更新并补充错误案例（sample_0001 GT=D/Pred=B 等）。
+- SpatialViz + MoT 评估：`outputs/spatialviz_mathcanvas_interleave_mot/run_1208_0301/spatialviz_mot_default`，566 样本，acc=0.311；代表性案例写入 `docs/experiment_summary.md`（如 MentalAnimation-ArrowMoving-Level0-0-3-3-2 GT=D/Pred=D，Level0-1-3-3-2 GT=C/Pred=D）。

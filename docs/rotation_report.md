@@ -2,6 +2,10 @@
 
 Dataset: `/workspace/oujingfeng/project/think_with_generated_images/datasets/mydatasets/dataset/data_modified_with_subject.json`
 
+模式速记：base=只有题干图；steps=题干+全部步骤图+步骤文本；steps_nofinal=题干+步骤图+步骤文本但移除最后一步图文让模型补完；interleave 表示图文交错喂入（非交错一次性提供）。
+
+MoT 交错运行说明：默认 `max_iterations=10` 未提前终止，action token 未触发 image 分支，输出目录仅含题干原图与 reasoning_result.json（无中间生成图）；如需中间图需修正 action 映射/结束条件后重跑。
+
 ## MathCanvas / BAGEL-Canvas
 | Mode / Pipeline          | Total | Correct | Missing_pred | Accuracy | Output Path |
 |--------------------------|-------|---------|--------------|----------|-------------|
@@ -10,6 +14,7 @@ Dataset: `/workspace/oujingfeng/project/think_with_generated_images/datasets/myd
 | steps_nofinal / non-int  | 1000  | 271     | 0            | 0.2710   | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_nofinal_ddp |
 | base / interleave        | 1000  | 242     | 2            | 0.2420   | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_interleave_base/rotation_base_default |
 | nofinal / interleave     | 1000  | 258     | 2            | 0.2580   | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_interleave_nofinal/rotation_nofinal_default |
+| base / interleave (MoT)  | 1000  | 258     | 0            | 0.2580   | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_interleave_base_mot/rotation_base_mot_default |
 | steps (Hunyuan, final off) | 1000 | 390   | 0 | 0.3900 | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_ddp_hy_nogen |
 | steps_nofinal (Hunyuan, final on) | 1000 | 291 | 0 | 0.2910 | MathCanvas/BAGEL-Canvas/outputs/rotation_mathcanvas_steps_nofinal_ddp_hy |
 
@@ -28,6 +33,12 @@ D) {choice4}
 
 Answer:
 ```
+
+Case study（MoT，base 交错，`rotation_base_mot_default`，均未生成中间图）：
+- sample_0001：GT=D，Pred=B，长链推理后仍落到错误选项（多次重复思考未收敛）。
+- sample_0003：GT=B，Pred=D，堆叠旋转描述混乱，最终随机落到 D。
+- sample_0042：GT=B，Pred=D，错误地将 X/Y 轴两次 180° 视作 90° 旋转，导致镜像方向判定错误。
+- sample_0100：GT=C，Pred=C，能按两次 180° 的组合保持三层结构的相对位置，给出正确选项。
 
 Case study (rotation, Hunyuan steps_nofinal, final on)：
 - sample00000: GT=D, Pred=C，尾句 `The final answer is \boxed{C}.`

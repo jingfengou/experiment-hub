@@ -7,6 +7,7 @@
   - steps_nofinal: 0.2710 (`outputs/rotation_mathcanvas_steps_nofinal_ddp`)
   - interleave base: 0.2420 (`outputs/rotation_mathcanvas_interleave_base/rotation_base_default`)
   - interleave nofinal: 0.2580 (`outputs/rotation_mathcanvas_interleave_nofinal/rotation_nofinal_default`)
+  - interleave base (MoT): 0.2580 (`outputs/rotation_mathcanvas_interleave_base_mot/rotation_base_mot_default`)
   - Prompt:
     ```
     You should first provide a reasoning process, then provide a single option(A, B, C or D) as the final answer.
@@ -37,6 +38,10 @@
 
     Answer:
     ```
+
+- SpatialViz (MoT, 566 samples from `SpatialViz/test-00000-of-00001.parquet`)
+  - interleave base: 0.3110 (`outputs/spatialviz_mathcanvas_interleave_mot/run_1208_0301/spatialviz_mot_default`)
+  - Case samples: `MentalAnimation-ArrowMoving-Level0-0-3-3-2` GT=D/Pred=D（推理链较长但收敛）；`...-1-3-3-2` GT=C/Pred=D（方向更新理解错误）；`...-2-3-3-2` GT=A/Pred=A。
 
 ## Qwen3-VL (official offline)
 - Rotation (1k samples, dataset: `.../dataset/data_modified_with_subject.json`)

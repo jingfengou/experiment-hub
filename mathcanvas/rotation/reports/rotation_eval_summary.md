@@ -7,9 +7,13 @@
 | steps_nofinal            | non-interleave | 1000  | 271     | 0            | 0.2710   | outputs/rotation_mathcanvas_steps_nofinal_ddp |
 | base                     | interleave     | 1000  | 242     | 2            | 0.2420   | outputs/rotation_mathcanvas_interleave_base/rotation_base_default |
 | nofinal                  | interleave     | 1000  | 258     | 2            | 0.2580   | outputs/rotation_mathcanvas_interleave_nofinal/rotation_nofinal_default |
+| base (MoT, 10 iters)     | interleave     | 1000  | 258     | 0            | 0.2580   | outputs/rotation_mathcanvas_interleave_base_mot/rotation_base_mot_default |
 
 - 评估基于数据集 `/workspace/oujingfeng/project/think_with_generated_images/datasets/mydatasets/dataset/data_modified_with_subject.json`。
 - 解析策略：优先 `<answer>…</answer>`，否则匹配含 answer/option/choice 等提示的 A-D，或末行单独大写 A-D，最后取文本末尾独立的大写 A-D（避免将量词 a 误判为答案）。
+- MoT 交错跑的是默认 `max_iterations=10`（未提前终止），因此每样本存 10 段文本推理后再取答案。
+- 本次 MoT 交错运行未生成中间图（action token 未触发 image 分支），样本目录仅有题干原图与 reasoning_result.json，如需中间图需修正 action 映射/结束条件后重跑。
+- 模式含义：base=只有题干图；steps=题干+全部步骤图+步骤文本；steps_nofinal=题干+步骤图+步骤文本但移除最后一步图文，让模型补完；interleave 表示图文交错喂入推理（非交错即一次性提供）。
 
 ## Prompt（base / steps / steps_nofinal 非交替）
 ```
